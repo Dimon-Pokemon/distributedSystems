@@ -109,7 +109,7 @@ class ClientHadler:
         while not shutdown:
             try:
                 # Ожидаем ввода данных
-                input_data = input(">>>").strip()
+                input_data = input("").strip()
                 if input_data:
                     # Создаем объект сообщения из введенных данных
                     message = Message(message=input_data, sender_name=self.name)
