@@ -39,7 +39,7 @@ class ClientHadler:
          Класс-Обработчик с бизнес-логикой клиента.
          Реализует методы получения и отображения сообщений
     """
-    def __init__(self, server_addr=('localhost', 8888), client_addr=('localhost', 54854)):
+    def __init__(self, server_addr=('localhost', 8888), client_addr=('localhost', 8888)):
         global shutdown
         # Флаг, сигнализирующий об успешном подключении
         join = False
@@ -109,7 +109,7 @@ class ClientHadler:
         while not shutdown:
             try:
                 # Ожидаем ввода данных
-                input_data = input("").strip()
+                input_data = input(">>>").strip()
                 if input_data:
                     # Создаем объект сообщения из введенных данных
                     message = Message(message=input_data, sender_name=self.name)
