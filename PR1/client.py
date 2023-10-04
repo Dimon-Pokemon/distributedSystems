@@ -39,7 +39,7 @@ class ClientHadler:
          Класс-Обработчик с бизнес-логикой клиента.
          Реализует методы получения и отображения сообщений
     """
-    def __init__(self, server_addr=('localhost', 8888), client_addr=('localhost', 8888)):
+    def __init__(self, server_addr=('localhost', 8888), client_addr=('localhost', 0)):
         global shutdown
         # Флаг, сигнализирующий об успешном подключении
         join = False
@@ -51,7 +51,11 @@ class ClientHadler:
                 # Адрес сервера (ip, port) к которому происходит подключение:
                 self.server_addr = server_addr
                 # Создание сокета:
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                if sys.platform == 'darwin': # Если ОС - mac os
+                    # , то передаем третий параметр - протокол.
+                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_ICMP)
+                else:
+                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 # Подключение сокета
                 self.socket.connect(client_addr)
                 join = True
@@ -65,7 +69,7 @@ class ClientHadler:
                 self.socket.sendto(connect_message_data.encode('utf-8'), self.server_addr)
             except Exception:
                 print(f"ClientHadler.__init__: Что-то пошло не так: {format_exc()}")
-                shutdown = True\
+                shutdown = True
 
     @staticmethod
     def show_message(message_obj: Message):
