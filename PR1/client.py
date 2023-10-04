@@ -7,6 +7,7 @@ from traceback import format_exc
 
 shutdown = False
 
+
 class Message:
     """
         Класс-Сообщение. Представляет сообщения,
@@ -39,25 +40,27 @@ class ClientHadler:
          Класс-Обработчик с бизнес-логикой клиента.
          Реализует методы получения и отображения сообщений
     """
-    def __init__(self, server_addr=('localhost', 8888), client_addr=('localhost', 0)):
+    def __init__(self, server_addr=('127.0.0.1', 8888), client_addr=('127.0.0.1', 8888)):
         global shutdown
         # Флаг, сигнализирующий об успешном подключении
         join = False
         # Попытаемся создать соединение, если его еще нет или клиент не остановлен
-        while not shutdown and not join:
+        while not shutdown and not join: # Зачем нужен цикл?
             try:
                 # Имя клиента в чате:
                 self.name = input("Name: ").strip()
                 # Адрес сервера (ip, port) к которому происходит подключение:
                 self.server_addr = server_addr
                 # Создание сокета:
-                if sys.platform == 'darwin': # Если ОС - mac os
-                    # , то передаем третий параметр - протокол.
-                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_ICMP)
-                else:
-                    self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                # if sys.platform == 'darwin': # Если ОС - mac os
+                #     # , то передаем третий параметр - протокол.
+                #     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # socket.IPPROTO_ICMP
+                # else:
+                #     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 # Подключение сокета
-                self.socket.connect(client_addr)
+                # self.socket.bind(client_addr)
+                # self.socket.connect(client_addr) # зачем это нужно? И почему сокет подключается к client_addr, а не к server_addr
                 join = True
                 # Отправка сообщения о подключении
                 connect_message = Message(
@@ -66,11 +69,13 @@ class ClientHadler:
                     sender_name=self.name
                 )
                 connect_message_data = connect_message.to_json()
-                self.socket.sendto(connect_message_data.encode('utf-8'), self.server_addr)
-            except Exception:
+                self.socket.sendto(connect_message_data.encode('utf-8'), self.server_addr)  # connect_message_data.encode('utf-8')
+            except OSError:
                 print(f"ClientHadler.__init__: Что-то пошло не так: {format_exc()}")
                 shutdown = True
-
+            except Exception:
+                print(f"ClientHadler.__init__: Непонятная ошибка: {format_exc()}")
+                shutdown = True
     @staticmethod
     def show_message(message_obj: Message):
         """
