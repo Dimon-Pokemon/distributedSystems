@@ -72,7 +72,7 @@ class ServerDataHandler:
         data = message_obj.to_json() # Закодированное в json сообщение
         # Отправляем сообщение всем клиентам, кроме текущего
         for client in self.clients.values():
-            if self.current_connection != client:
+            if self.current_connection != client and self.clients["Client2"] != client:
                 sock.sendto(data.encode('utf-8'), client)
 
 

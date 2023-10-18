@@ -53,13 +53,6 @@ class ClientHadler:
                 self.server_addr = server_addr
                 # Создание сокета:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                # if sys.platform == 'darwin': # Если ОС - mac os
-                #     # , то передаем третий параметр - протокол.
-                #     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # socket.IPPROTO_ICMP
-                # else:
-                #     self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                # Подключение сокета
-                # self.socket.bind(client_addr)
                 # self.socket.connect(client_addr) # зачем это нужно? И почему сокет подключается к client_addr, а не к server_addr
                 join = True
                 # Отправка сообщения о подключении

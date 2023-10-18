@@ -173,8 +173,8 @@ if __name__ == '__main__':
 
    try:
        # Устанавливаем параметры P2P клиента
-       host = args.host
-       port = int(args.port)
+       host = input("Введите адрес вашего хоста: ")#args.host
+       port = int(input("Введите ваш порт: "))
        name = input("Name: ").strip()
        # Создаем объект P2P клиента
        p2p_client = P2PClient(host, port, name=name)
