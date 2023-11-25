@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from Main import Main
 from Client import Client
 
 
@@ -9,27 +10,15 @@ class UserInterface:
     mainWindow: Tk = None
     client = None
 
-    def __init__(self, x: int = 0, y: int = 0, height: int = 1280, width: int = 720):
-        self.connect_to_chat()
+    main: Main = None
+
+    def __init__(self, main: Main):
+        self.main = main
 
     def get_client(self):
         return self.client
 
-    def create_client_and_connect_to_chat(self, entry_host: Entry, entry_port: Entry, entry_name: Entry, entry_server_host: Entry, entry_server_port: Entry):
-        """Метод получения введенных данных для создания клиента"""
-        host = entry_host.get()
-        port = int(entry_port.get())
-        name = entry_name.get()
-
-        self.client = Client(host, port, name)
-        # self.client.connect((entry_server_host.get(), int(entry_server_port.get())))
-        print("Method receive work!")
-
-        self.connectToChatWindow.destroy()
-
-        print("Method destroy is working!")
-
-    def connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
+    def start_window_create_or_connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
 
         self.connectToChatWindow = Tk()
         self.connectToChatWindow.title("Подсоединиться к чату")
@@ -45,7 +34,7 @@ class UserInterface:
         input_name = Entry(self.connectToChatWindow)
         input_server_host = Entry(self.connectToChatWindow)
         input_server_port = Entry(self.connectToChatWindow)
-        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.create_client_and_connect_to_chat(
+        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.main.create_client_and_connect_to_chat(
             input_your_host,
             input_your_port,
             input_name,
