@@ -1,7 +1,10 @@
 import json
 import socket
-from Message import Message
 import threading
+
+from Status import Status
+from Message import Message
+from Main import Main
 
 
 class Client:
@@ -9,7 +12,11 @@ class Client:
     run = False
     connections: dict = {}
 
-    def __init__(self, host: str = '127.0.0.1', port: int = 2550, name: str = "test"):
+    main: Main = None
+
+    def __init__(self, main: Main, host: str = '127.0.0.1', port: int = 2550, name: str = "test"):
+        self.main = main
+
         self.host = host
         self.port = port
         self.name = name
@@ -30,7 +37,7 @@ class Client:
     def connect(self, address):
         self.socket.connect(address)
         message = Message(
-            status="join",
+            status=Status.JOIN.value,
             host=self.host,
             port=self.port,
             name=self.name
@@ -41,9 +48,17 @@ class Client:
         while self.run:
             data, addr = self.socket.recvfrom(1024)
             data = dict(json.loads(data.decode("utf-8")))
-            if data['status'] == 'connections':
+            if data['status'] == Status.CONNECTIONS.value:
                 self.connections = data['connections']
                 print(self.connections)
+            # Если в сообщении информация о новом клиенте чата
+            elif data['status'] == Status.NEW_CLIENT_INFO.value:
+                # Добавляем клиента в список подключений
+                self.connections[data['address']] = data['name']
+                self.main.update_listBox(data['name'])
+
+    def get_connections(self):
+        return self.connections
 
     def send(self):
         pass
