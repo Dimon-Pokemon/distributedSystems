@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from Main import Main
 from Client import Client
 
 
@@ -10,13 +9,10 @@ class UserInterface:
     mainWindow: Tk = None
     client = None
 
-    main: Main = None
+    main = None
 
-    def __init__(self, main: Main):
+    def __init__(self, main):
         self.main = main
-
-    def get_client(self):
-        return self.client
 
     def start_window_create_or_connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
 
@@ -34,13 +30,13 @@ class UserInterface:
         input_name = Entry(self.connectToChatWindow)
         input_server_host = Entry(self.connectToChatWindow)
         input_server_port = Entry(self.connectToChatWindow)
-        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.main.create_client_and_connect_to_chat(
-            input_your_host,
-            input_your_port,
-            input_name,
-            input_server_host,
-            input_server_port
-        ))
+        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: (self.main.create_client_and_connect_to_chat(
+            input_your_host.get(),
+            int(input_your_port.get()),
+            input_name.get(),
+            input_server_host.get(),
+            int(input_server_port.get())
+        ), print("Клиент создан. Нужно удалить окно!"), self.connectToChatWindow.destroy()))
         separator = ttk.Separator(self.connectToChatWindow)
         create = Button(self.connectToChatWindow, text="Создать чат")
 

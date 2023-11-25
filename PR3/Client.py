@@ -23,7 +23,8 @@ class Client:
 
         self.run = True
 
-        thread = threading.Thread(target=self.receive)
+    def start_receive(self):
+        thread = threading.Thread(target=self.receive, daemon=True)
         thread.start()
 
     def connect(self, address):
