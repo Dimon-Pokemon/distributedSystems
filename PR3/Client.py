@@ -57,8 +57,5 @@ class Client:
                 self.connections[data['address']] = data['name']
                 self.main.update_listBox(data['name'])
 
-    def get_connections(self):
-        return self.connections
-
     def send(self):
         pass
