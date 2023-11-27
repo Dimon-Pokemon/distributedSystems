@@ -1,7 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
-import Message
+from Message import Message
 
 from typing import List
 
