@@ -3,6 +3,8 @@ from tkinter import *
 from tkinter import ttk
 import Message
 
+from typing import List
+
 
 class UserInterface:
     connectToChatWindow: Tk = None
@@ -64,13 +66,28 @@ class UserInterface:
 
         self.connectToChatWindow.mainloop()
 
-    def print_messages(self, messages):
+    def print_message(self, message: Message):
+        """
+        Метод выводит одно сообщение в область чата (messages_canvas: Canvas)
+        """
+        message_attributes = message.__dict__
+        if message_attributes['position'] == 'left':
+            Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='w', padx=5, pady=5)
+        else:
+            Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
+
+    def print_all_messages(self, messages: List[Message]):
+        """
+        Метод вывода всех сообщений чата при переключении между чатами.
+
+        Удаляет все старые сообщения прошлого чата с messages_canvas: Canvas и затем
+        добавляет сообщения выбранного на данный момент чата через метод print_message.
+
+        :param messages: список сообщений в виде списка объектов класса Message
+        """
+        self.messages_canvas.delete('all')
         for message in messages:
-            message_attributes = message.__dict__
-            if message_attributes['position'] == 'left':
-                Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='w', padx=5, pady=5)
-            else:
-                Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
+            self.print_message(message)
 
     def start_main_window(self):
         x = 400
