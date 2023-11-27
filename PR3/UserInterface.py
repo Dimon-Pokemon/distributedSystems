@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
+import Message
 
 
 class UserInterface:
@@ -12,6 +13,10 @@ class UserInterface:
     main = None
 
     list_box_connections: Listbox = None
+
+    # Холст (выделенная область на которой можно свободно размещать разные графические элементы)
+    # на который будут выводится сообщения чата
+    messages_canvas: Canvas = None
 
     def __init__(self, main):
         self.main = main
@@ -59,6 +64,14 @@ class UserInterface:
 
         self.connectToChatWindow.mainloop()
 
+    def print_messages(self, messages):
+        for message in messages:
+            message_attributes = message.__dict__
+            if message_attributes['position'] == 'left':
+                Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='w', padx=5, pady=5)
+            else:
+                Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
+
     def start_main_window(self):
         x = 400
         y = 600
@@ -69,25 +82,62 @@ class UserInterface:
         for i in self.main.client.connections.values():
             self.list_box_connections.insert(0, i)
 
-        messages_frame = ttk.Frame(self.mainWindow, borderwidth=1, relief=SOLID, padding=[8, 10])
-        scroll_bar = tkinter.Scrollbar(messages_frame)
+        self.messages_canvas = Canvas(self.mainWindow, borderwidth=1, relief=SOLID, scrollregion=(-10000, -10000, 10000, 10000))
+        # for message_obj in [msg1, msg2, msg3, msg4, msg5]:
+        #     message_attributes = message_obj.__dict__
+        #     if message_attributes['place'] == 'left':
+        #         Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='w', padx=5, pady=5)
+        #     else:
+        #         Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
+
+        scroll_bar = tkinter.Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
+        self.messages_canvas['yscrollcommand'] = scroll_bar.set
 
         entry_message = Entry(self.mainWindow)
 
         button_send_message = Button(self.mainWindow, text="Отправить")
 
-        list_box_connections_WIDTH = 75
-        messages_frame_height = y - button_send_message.winfo_reqheight()
-        entry_message_WIDTH = 225
+        # Размеры виджетов
+        list_box_connections_WIDTH = 75 # Ширина списка подключений
+        messages_canvas_height = y - button_send_message.winfo_reqheight() # Высота Canvas для вывода сообщений
+        messages_canvas_width = 315  # Ширина 
+        entry_message_WIDTH = 225 # Ширина поля ввода сообщения
 
         self.list_box_connections.place(x=0, y=0, width=list_box_connections_WIDTH, height=600)
-        messages_frame.place(x=list_box_connections_WIDTH, y=0, width=325, height=messages_frame_height)
-        scroll_bar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-        entry_message.place(x=list_box_connections_WIDTH, y=messages_frame_height, width=entry_message_WIDTH)
-        button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_frame_height, width=100)
+        self.messages_canvas.place(x=list_box_connections_WIDTH, y=0, width=messages_canvas_width, height=messages_canvas_height)
+        # scroll_bar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+        scroll_bar.place(x=list_box_connections_WIDTH+messages_canvas_width, y=0, width=20, height=messages_canvas_height)
+        entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
+        button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_canvas_height, width=100)
 
         self.mainWindow.mainloop()
 
-
+        def create_test_messages():
+            msg1 = Message.Message(
+                status='message',
+                text='Hello',
+                position='left'
+            )
+            msg2 = Message.Message(
+                status='message',
+                text='Hello',
+                position='right'
+            )
+            msg3 = Message.Message(
+                status='message',
+                text='How are you?',
+                position='right'
+            )
+            msg4 = Message.Message(
+                status='message',
+                text='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nI am fine, thanks. Are you?',
+                position='left'
+            )
+            msg5 = Message.Message(
+                status='message',
+                text='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfsfsfsdfsfsdfsdfsdfsfsdfdsfsdfsd?',
+                position='left'
+            )
+            return [msg1, msg2, msg3, msg4, msg5]
 
 
