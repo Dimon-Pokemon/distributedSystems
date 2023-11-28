@@ -48,12 +48,20 @@ class Server:
             name=name_new_client
         )
         byte_json_message = message.to_json().encode("utf-8")
-        for address_client in self.connections.keys():
+        for address_client in self.connections.values():
             # В словаре соединений адреса хронятся в виде строк '127.0.0.1:2551'
             # а для отправки на сокет данных нужен адрес в виде кортежа ('127.0.0.1', 2551)
             tuple_address_client = address_client.split(":") # Получаем список вида ['127.0.0.1', '2551']
             tuple_address_client = (tuple_address_client[0], int(tuple_address_client[1])) # Получаем кортеж вида ('127.0.0.1', 2551)
             self.socket.sendto(byte_json_message, tuple_address_client)
+    #
+    # def send_error_duplicate_name(self, address, name):
+    #     message = Message(
+    #         status=Status.ERROR_DUPLICATE_NAME.value,
+    #         name=name
+    #     )
+    #     byte_json_message = message.to_json().encode("utf-8")
+    #     self.socket.sendto(byte_json_message, address)
 
     def receive(self):
         while self.run:
@@ -61,10 +69,14 @@ class Server:
             data = dict(json.loads(data.decode("utf-8")))
             print(data)
             if data['status'] == Status.JOIN.value:
-                self.send_connections_to_new_client(addr)
-                print("Hello,", addr)
-                self.send_info_about_new_client(addr, data['name'])
-            self.connections[self.convert_tuple_address_to_string(addr)] = data['name']
+                if data["name"] in self.connections:
+                    pass
+                    # self.send_error_duplicate_name(addr, data['name'])
+                else:
+                    self.send_connections_to_new_client(addr)
+                    print("Hello,", addr)
+                    self.send_info_about_new_client(addr, data['name'])
+                    self.connections[data['name']] = self.convert_tuple_address_to_string(addr)
 
     def run_server(self):
         thread = threading.Thread(target=self.receive)

@@ -1,6 +1,7 @@
-import tkinter
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
+
 from Message import Message
 
 from typing import List
@@ -23,6 +24,9 @@ class UserInterface:
     def __init__(self, main):
         self.main = main
 
+    # def show_error(self, title, message):
+    #     messagebox.showerror(title, message)
+
     def start_window_create_or_connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
 
         self.connectToChatWindow = Tk()
@@ -39,13 +43,14 @@ class UserInterface:
         input_name = Entry(self.connectToChatWindow)
         input_server_host = Entry(self.connectToChatWindow)
         input_server_port = Entry(self.connectToChatWindow)
-        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: (self.main.create_client_and_connect_to_chat(
+        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.main.сделать_так_чтобы_все_было_хорошо(
             input_your_host.get(),
             int(input_your_port.get()),
             input_name.get(),
             input_server_host.get(),
             int(input_server_port.get())
-        ), self.connectToChatWindow.destroy(), self.start_main_window()))
+        ))
+        #, self.connectToChatWindow.destroy(), self.start_main_window())
         separator = ttk.Separator(self.connectToChatWindow)
         create = Button(self.connectToChatWindow, text="Создать чат")
 
@@ -89,14 +94,15 @@ class UserInterface:
         for message in messages:
             self.print_message(message)
 
-    def start_main_window(self):
+    def start_main_window(self, name, host, port):
         x = 400
         y = 600
         self.mainWindow = Tk()
         self.mainWindow.geometry(f"{x}x{y}")
+        self.mainWindow.title(f"Ваш ник: {name}. Ваш адрес: {host}:{port}")
 
         self.list_box_connections = Listbox(self.mainWindow)
-        for i in self.main.client.connections.values():
+        for i in self.main.client.connections.keys():
             self.list_box_connections.insert(0, i)
 
         self.messages_canvas = Canvas(self.mainWindow, borderwidth=1, relief=SOLID, scrollregion=(-10000, -10000, 10000, 10000))
@@ -107,7 +113,7 @@ class UserInterface:
         #     else:
         #         Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
 
-        scroll_bar = tkinter.Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
+        scroll_bar = Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
         self.messages_canvas['yscrollcommand'] = scroll_bar.set
 
         entry_message = Entry(self.mainWindow)

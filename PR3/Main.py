@@ -29,12 +29,15 @@ class Main:
         self.client.start_receive()
 
         self.client.connect((server_host, server_port))
-        # print("Method receive work!")
+    #
+    # def restart(self, name):
+    #     self.start()
+    #     self.userInterface.show_error("Ошибка", "Пользователь с ником уже подключен")
 
-        # self.userInterface.connectToChatWindow.destroy()
-
-        # print("Method destroy is working!")
-
+    def сделать_так_чтобы_все_было_хорошо(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
+        self.create_client_and_connect_to_chat(client_host, client_port, client_name, server_host, server_port)
+        self.userInterface.connectToChatWindow.destroy()
+        self.userInterface.start_main_window(client_name, client_host, client_port)
 
 if __name__ == "__main__":
     main = Main()

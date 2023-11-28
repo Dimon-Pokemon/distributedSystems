@@ -54,8 +54,11 @@ class Client:
             # Если в сообщении информация о новом клиенте чата
             elif data['status'] == Status.NEW_CLIENT_INFO.value:
                 # Добавляем клиента в список подключений
-                self.connections[data['address']] = data['name']
+                self.connections[data['name']] = data['address']
                 self.main.update_listBox(data['name'])
+            # elif data['status'] == Status.ERROR_DUPLICATE_NAME.value:
+            #     self.socket.close()
+            #     self.main.restart(data['name'])
 
     def send(self):
         pass
