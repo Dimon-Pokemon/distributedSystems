@@ -94,7 +94,8 @@ class UserInterface:
 
         :param messages: список сообщений в виде списка объектов класса Message
         """
-        self.messages_canvas.delete('all')
+        for widget in self.messages_canvas.winfo_children():
+            widget.destroy()
         for message in messages:
             self.print_message(message)
 
@@ -122,8 +123,8 @@ class UserInterface:
 
         self.messages_canvas = Canvas(self.mainWindow, borderwidth=1, relief=SOLID, scrollregion=(-10000, -10000, 10000, 10000))
 
-        scroll_bar = Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
-        self.messages_canvas['yscrollcommand'] = scroll_bar.set
+        scrollbar = Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
+        self.messages_canvas['yscrollcommand'] = scrollbar.set
 
         entry_message = Entry(self.mainWindow)
 
@@ -139,7 +140,7 @@ class UserInterface:
         self.list_box_connections.place(x=0, y=0, width=list_box_connections_WIDTH, height=600)
         self.messages_canvas.place(x=list_box_connections_WIDTH, y=0, width=messages_canvas_width, height=messages_canvas_height)
         # scroll_bar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-        scroll_bar.place(x=list_box_connections_WIDTH+messages_canvas_width, y=0, width=20, height=messages_canvas_height)
+        scrollbar.place(x=list_box_connections_WIDTH+messages_canvas_width, y=0, width=20, height=messages_canvas_height)
         entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
         button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_canvas_height, width=100)
 
