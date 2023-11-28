@@ -56,9 +56,9 @@ class Main:
             position='left',
             text=text_message
         )
-        print(self.chats_history)
         self.chats_history[name].append(message)
-        self.userInterface.print_message(message)
+        if name == self.selected_chat:
+            self.userInterface.print_message(message)
 
     def create_client_and_connect_to_chat(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
         """Метод получения введенных данных для создания клиента"""
