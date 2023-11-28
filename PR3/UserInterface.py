@@ -94,12 +94,18 @@ class UserInterface:
         for message in messages:
             self.print_message(message)
 
+    def on_select_listbox(self, event):
+        select_chat_name = self.list_box_connections.get(self.list_box_connections.curselection()[0]) # Получаем выбранное из списка имя пользователя
+        self.main.set_selected_chat(select_chat_name)
+        messages = self.main.get_chat_history(select_chat_name) # Получаем все сообщения чата с этим пользователем
+        self.print_all_messages(messages) # Вывод на поле всех сообщений этого пользователя
+
     def start_main_window(self, name, host, port):
         x = 400
         y = 600
         self.mainWindow = Tk()
         self.mainWindow.geometry(f"{x}x{y}")
-        self.mainWindow.title(f"Ваш ник: {name}. Ваш адрес: {host}:{port}")
+        self.mainWindow.title(f"ваш ник: {name}. Ваш адрес: {host}:{port}")
 
         self.list_box_connections = Listbox(self.mainWindow)
         for i in self.main.client.connections.keys():
@@ -118,7 +124,7 @@ class UserInterface:
 
         entry_message = Entry(self.mainWindow)
 
-        button_send_message = Button(self.mainWindow, text="Отправить")
+        button_send_message = Button(self.mainWindow, text="отправить", command=lambda: self.main.send(self.list_box_connections.get(self.list_box_connections.curselection()), entry_message.get()))
 
         # Размеры виджетов
         list_box_connections_WIDTH = 75 # Ширина списка подключений
@@ -132,6 +138,8 @@ class UserInterface:
         scroll_bar.place(x=list_box_connections_WIDTH+messages_canvas_width, y=0, width=20, height=messages_canvas_height)
         entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
         button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_canvas_height, width=100)
+
+        self.list_box_connections.bind('<<ListboxSelect>>', self.on_select_listbox)
 
         self.mainWindow.mainloop()
 

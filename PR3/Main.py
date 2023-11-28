@@ -1,12 +1,16 @@
 import threading
 
 from UserInterface import UserInterface
-from tkinter import *
+from Message import Message
+from Status import Status
+# from tkinter import *
 
 
 class Main:
     client = None
     userInterface: UserInterface = None
+    chats_history: dict = {}
+    selected_chat: str = None
 
     def __init__(self):
         self.userInterface = UserInterface(self)
@@ -16,6 +20,33 @@ class Main:
 
     def update_listBox(self, name):
         self.userInterface.list_box_connections.insert(0, name)
+
+    def set_selected_chat(self, name):
+        self.selected_chat = name
+
+    def get_chat_history(self, name: str):
+        return self.chats_history[name]
+
+    def send(self, to_name, text_message):
+        message = Message(
+            status=Status.MESSAGE.value,
+            position='right',
+            to_name=to_name,
+            from_name=self.client.name,
+            text=text_message
+        )
+        self.chats_history[to_name].append(message)
+        self.userInterface.print_message(message)
+        self.client.send(to_name, message)
+
+    def print_new_message_from_client(self, text_message, name):
+        message = Message(
+            position='left',
+            text=text_message
+        )
+        print(self.chats_history)
+        self.chats_history[name].append(message)
+        self.userInterface.print_message(message)
 
     def create_client_and_connect_to_chat(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
         """Метод получения введенных данных для создания клиента"""

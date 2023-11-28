@@ -35,30 +35,38 @@ class Client:
         thread.start()
 
     def connect(self, address):
-        self.socket.connect(address)
         message = Message(
             status=Status.JOIN.value,
             host=self.host,
             port=self.port,
             name=self.name
         )
-        self.socket.send(message.to_json().encode("utf-8"))
+        self.socket.sendto(message.to_json().encode("utf-8"), address)
 
     def receive(self):
         while self.run:
             data, addr = self.socket.recvfrom(1024)
             data = dict(json.loads(data.decode("utf-8")))
-            if data['status'] == Status.CONNECTIONS.value:
+            if data['status'] == Status.MESSAGE.value:
+                self.main.print_new_message_from_client(data['text'], data['from_name'])
+            elif data['status'] == Status.CONNECTIONS.value:
                 self.connections = data['connections']
                 print(self.connections)
+                for client_name in self.connections.keys():
+                    self.main.chats_history[client_name] = []
             # Если в сообщении информация о новом клиенте чата
             elif data['status'] == Status.NEW_CLIENT_INFO.value:
                 # Добавляем клиента в список подключений
                 self.connections[data['name']] = data['address']
+                self.main.chats_history[data['name']] = []
                 self.main.update_listBox(data['name'])
             # elif data['status'] == Status.ERROR_DUPLICATE_NAME.value:
             #     self.socket.close()
             #     self.main.restart(data['name'])
 
-    def send(self):
-        pass
+    def send(self, to, message: Message):
+        print("Список участников чата:", self.connections)
+        byte_json_message = message.to_json().encode('utf-8')
+        host, port = self.connections[to].split(":")
+        self.socket.sendto(byte_json_message, (host, int(port)))
+        print("Сообщение отправлено!")
