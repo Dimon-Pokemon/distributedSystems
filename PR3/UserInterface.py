@@ -27,6 +27,10 @@ class UserInterface:
     # def show_error(self, title, message):
     #     messagebox.showerror(title, message)
 
+    def delete_name_from_listbox(self, name):
+        index = self.list_box_connections.get(0, END).index(name)  # Получаем идекс элемента из listbox
+        self.list_box_connections.delete(index) # Удаляем элемент по индексу
+
     def start_window_create_or_connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
 
         self.connectToChatWindow = Tk()
@@ -96,7 +100,7 @@ class UserInterface:
 
     def on_select_listbox(self, event):
         select_chat_name = self.list_box_connections.get(self.list_box_connections.curselection()[0]) # Получаем выбранное из списка имя пользователя
-        self.main.set_selected_chat(select_chat_name)
+        self.main.set_selected_chat(select_chat_name) # Устанавливаем выбранный чат
         messages = self.main.get_chat_history(select_chat_name) # Получаем все сообщения чата с этим пользователем
         self.print_all_messages(messages) # Вывод на поле всех сообщений этого пользователя
 
@@ -104,20 +108,19 @@ class UserInterface:
         x = 400
         y = 600
         self.mainWindow = Tk()
+        # Добавлям реакцию на закрытие приложения
+        self.mainWindow.protocol("WM_DELETE_WINDOW", self.main.exit)
         self.mainWindow.geometry(f"{x}x{y}")
         self.mainWindow.title(f"ваш ник: {name}. Ваш адрес: {host}:{port}")
 
         self.list_box_connections = Listbox(self.mainWindow)
         for i in self.main.client.connections.keys():
             self.list_box_connections.insert(0, i)
+        # Связавание события выбора элемента Listbox'а с методом on_select_listbox
+        # Переключение между чатами
+        self.list_box_connections.bind('<<ListboxSelect>>', self.on_select_listbox)
 
         self.messages_canvas = Canvas(self.mainWindow, borderwidth=1, relief=SOLID, scrollregion=(-10000, -10000, 10000, 10000))
-        # for message_obj in [msg1, msg2, msg3, msg4, msg5]:
-        #     message_attributes = message_obj.__dict__
-        #     if message_attributes['place'] == 'left':
-        #         Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='w', padx=5, pady=5)
-        #     else:
-        #         Label(self.messages_canvas, text=message_attributes['text']).pack(anchor='e', padx=5, pady=5)
 
         scroll_bar = Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
         self.messages_canvas['yscrollcommand'] = scroll_bar.set
@@ -132,6 +135,7 @@ class UserInterface:
         messages_canvas_width = 315  # Ширина 
         entry_message_WIDTH = 225 # Ширина поля ввода сообщения
 
+        '''Размещение виджетов в окне'''
         self.list_box_connections.place(x=0, y=0, width=list_box_connections_WIDTH, height=600)
         self.messages_canvas.place(x=list_box_connections_WIDTH, y=0, width=messages_canvas_width, height=messages_canvas_height)
         # scroll_bar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
@@ -139,36 +143,5 @@ class UserInterface:
         entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
         button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_canvas_height, width=100)
 
-        self.list_box_connections.bind('<<ListboxSelect>>', self.on_select_listbox)
-
         self.mainWindow.mainloop()
-
-        def create_test_messages():
-            msg1 = Message.Message(
-                status='message',
-                text='Hello',
-                position='left'
-            )
-            msg2 = Message.Message(
-                status='message',
-                text='Hello',
-                position='right'
-            )
-            msg3 = Message.Message(
-                status='message',
-                text='How are you?',
-                position='right'
-            )
-            msg4 = Message.Message(
-                status='message',
-                text='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nI am fine, thanks. Are you?',
-                position='left'
-            )
-            msg5 = Message.Message(
-                status='message',
-                text='\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nfsfsfsdfsfsdfsdfsdfsfsdfdsfsdfsd?',
-                position='left'
-            )
-            return [msg1, msg2, msg3, msg4, msg5]
-
 

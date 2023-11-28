@@ -1,4 +1,6 @@
+import sys
 import threading
+import tkinter
 
 from UserInterface import UserInterface
 from Message import Message
@@ -23,6 +25,16 @@ class Main:
 
     def set_selected_chat(self, name):
         self.selected_chat = name
+
+    def delete_client(self, name_client_which_exit):
+        # Удаление истории переписки с вышедшим клиентом
+        self.chats_history.pop(name_client_which_exit)
+        # Удаление вышедшего клиента из GUI
+        self.userInterface.delete_name_from_listbox(name_client_which_exit)
+
+    def exit(self):
+        self.client.exit() # Вызываем метод уведомления всех участникам чата о выходе клиента из чата
+        sys.exit(0)
 
     def get_chat_history(self, name: str):
         return self.chats_history[name]

@@ -1,5 +1,6 @@
 import json
 import socket
+import sys
 import threading
 
 from Status import Status
@@ -43,6 +44,18 @@ class Client:
         )
         self.socket.sendto(message.to_json().encode("utf-8"), address)
 
+    def exit(self):
+        message = Message(
+            status=Status.EXIT.value,
+            name=self.name
+        )
+        byte_json_message = message.to_json().encode('utf-8')
+        for address in self.connections.values():
+            host, port = address.split(":")
+            self.socket.sendto(byte_json_message, (host, int(port)))
+        self.socket.close()
+        sys.exit(0)
+
     def receive(self):
         while self.run:
             data, addr = self.socket.recvfrom(1024)
@@ -60,6 +73,10 @@ class Client:
                 self.connections[data['name']] = data['address']
                 self.main.chats_history[data['name']] = []
                 self.main.update_listBox(data['name'])
+            elif data['status'] == Status.EXIT.value:
+                # Удаление вышедшего клиента из списка участников чата
+                self.connections.pop(data['name'])
+                self.main.delete_client(data['name'])
             # elif data['status'] == Status.ERROR_DUPLICATE_NAME.value:
             #     self.socket.close()
             #     self.main.restart(data['name'])
