@@ -1,3 +1,4 @@
+import argparse
 import json
 import socket
 import threading
@@ -84,6 +85,11 @@ class Server:
 
 
 if __name__ == "__main__":
-    server = Server("127.0.0.1", 2550)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", dest="host", default="127.0.0.1")
+    parser.add_argument("--port", dest="port", default=2550, type=int)
+    args = parser.parse_args()
+
+    server = Server(args.host, args.port)
     server.run_server()
 

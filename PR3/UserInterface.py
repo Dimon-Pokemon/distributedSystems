@@ -47,7 +47,7 @@ class UserInterface:
         input_name = Entry(self.connectToChatWindow)
         input_server_host = Entry(self.connectToChatWindow)
         input_server_port = Entry(self.connectToChatWindow)
-        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.main.сделать_так_чтобы_все_было_хорошо(
+        connect = Button(self.connectToChatWindow, text="Подключиться", command=lambda: self.main.create_client_and_start_chat(
             input_your_host.get(),
             int(input_your_port.get()),
             input_name.get(),
@@ -56,7 +56,13 @@ class UserInterface:
         ))
         #, self.connectToChatWindow.destroy(), self.start_main_window())
         separator = ttk.Separator(self.connectToChatWindow)
-        create = Button(self.connectToChatWindow, text="Создать чат")
+        create = Button(self.connectToChatWindow, text="Создать чат", command=lambda: self.main.create_server(
+            input_your_host.get(),
+            int(input_your_port.get()),
+            input_name.get(),
+            input_server_host.get(),
+            int(input_server_port.get())
+        ))
 
         # label1.pack()
         label_your_host.pack()

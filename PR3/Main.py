@@ -1,5 +1,7 @@
+import os
 import sys
 import threading
+import time
 import tkinter
 
 from UserInterface import UserInterface
@@ -77,10 +79,17 @@ class Main:
     #     self.start()
     #     self.userInterface.show_error("Ошибка", "Пользователь с ником уже подключен")
 
-    def сделать_так_чтобы_все_было_хорошо(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
+    def create_client_and_start_chat(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
         self.create_client_and_connect_to_chat(client_host, client_port, client_name, server_host, server_port)
         self.userInterface.connectToChatWindow.destroy()
         self.userInterface.start_main_window(client_name, client_host, client_port)
+
+    def create_server(self, client_host: str, client_port: int, client_name: str, server_host: str, server_port: int):
+        thread = threading.Thread(target=os.system, args=[f"python3 Server.py --host {server_host} --port {server_port}"])
+        thread.start()
+        time.sleep(10) # Надо дать время серверу на запуск
+        self.create_client_and_start_chat(client_host, client_port, client_name, server_host, server_port)
+
 
 if __name__ == "__main__":
     main = Main()
