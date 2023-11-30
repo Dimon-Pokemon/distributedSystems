@@ -1,6 +1,7 @@
 import argparse
 import json
 import socket
+import sys
 import threading
 
 from Status import Status
@@ -8,14 +9,19 @@ from Message import Message
 
 from Node import Node
 
+from time import time, sleep
 
 class Server(Node):
 
     socket = None
     connections: dict = {}
     run = False
+    start_waiting = None
+    timeout = None
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, timeout=30):
+        self.timeout = timeout # Установка времени ожидания новых подключений
+
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind((host, port))
@@ -84,8 +90,25 @@ class Server(Node):
                 self.connections.pop(data['name'])
 
     def run_server(self):
-        thread = threading.Thread(target=self.receive)
-        thread.run()
+        # Поток демон автоматически завершается, когда основной поток завершается
+        thread = threading.Thread(target=self.receive, daemon=True)
+        thread.start()
+        '''Реализация автоматического отключения сервера, если нет новых подключений в течении некоторого промежутка времени'''
+        while self.run:
+            # Проверка наличия подключений
+            if len(self.connections) == 0: # В чате никого нет
+                if self.start_waiting is None: # Проверка, был ли начат отсчет времени до отключения
+                    self.start_waiting = time() # Время начала ожидания подключения
+                    print("Time:", self.start_waiting)
+                else:
+                    if time() - self.start_waiting > self.timeout:
+                        self.run = False # Меняем флаг. В целом, ненужно, так как вызывем sys.exit(0)
+                        sys.exit(0) # Завершение работы сервера
+                    print("Diff:", time() - self.start_waiting)  # Вывод информация о прошедшем времени ожидания
+            else:
+                self.start_waiting = None
+            sleep(3)
+
 
 
 if __name__ == "__main__":
