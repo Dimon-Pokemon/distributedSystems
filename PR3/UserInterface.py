@@ -16,6 +16,7 @@ class UserInterface:
     main = None
 
     list_box_connections: Listbox = None
+    entry_message: Entry = None
 
     # Холст (выделенная область на которой можно свободно размещать разные графические элементы)
     # на который будут выводится сообщения чата
@@ -111,6 +112,10 @@ class UserInterface:
         messages = self.main.get_chat_history(select_chat_name) # Получаем все сообщения чата с этим пользователем
         self.print_all_messages(messages) # Вывод на поле всех сообщений этого пользователя
 
+    def send_message(self, event=None):
+        self.main.send(self.list_box_connections.get(self.list_box_connections.curselection()), self.entry_message.get())
+        self.entry_message.delete(0, END)
+
     def start_main_window(self, name, host, port):
         x = 400
         y = 600
@@ -132,9 +137,10 @@ class UserInterface:
         scrollbar = Scrollbar(self.mainWindow, orient='vertical', command=self.messages_canvas.yview)
         self.messages_canvas['yscrollcommand'] = scrollbar.set
 
-        entry_message = Entry(self.mainWindow)
+        self.entry_message = Entry(self.mainWindow)
+        self.entry_message.bind('<Return>', self.send_message)
 
-        button_send_message = Button(self.mainWindow, text="отправить", command=lambda: self.main.send(self.list_box_connections.get(self.list_box_connections.curselection()), entry_message.get()))
+        button_send_message = Button(self.mainWindow, text="отправить", command=lambda: self.send_message())
 
         # Размеры виджетов
         list_box_connections_WIDTH = 75 # Ширина списка подключений
@@ -147,7 +153,7 @@ class UserInterface:
         self.messages_canvas.place(x=list_box_connections_WIDTH, y=0, width=messages_canvas_width, height=messages_canvas_height)
         # scroll_bar.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         scrollbar.place(x=list_box_connections_WIDTH+messages_canvas_width, y=0, width=20, height=messages_canvas_height)
-        entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
+        self.entry_message.place(x=list_box_connections_WIDTH, y=messages_canvas_height, width=entry_message_WIDTH)
         button_send_message.place(x=entry_message_WIDTH+list_box_connections_WIDTH, y=messages_canvas_height, width=100)
 
         self.mainWindow.mainloop()
