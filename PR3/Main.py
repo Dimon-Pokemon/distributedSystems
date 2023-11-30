@@ -16,6 +16,11 @@ class Main:
     chats_history: dict = {}
     selected_chat: str = None
 
+    '''address_chat_node - это участник чата или сигнальный сервер. При запуске приложения мы указываем ip и port этого
+     участника чата/сигнального сервера. К нему новый клиент обращается чтобы получить сведения о других
+      участниках(клиентах) чата.'''
+    address_chat_node = None # Может быть сервером или клиентом чата
+
     def __init__(self):
         self.userInterface = UserInterface(self)
 
@@ -35,7 +40,7 @@ class Main:
         self.userInterface.delete_name_from_listbox(name_client_which_exit)
 
     def exit(self):
-        self.client.exit() # Вызываем метод уведомления всех участникам чата о выходе клиента из чата
+        self.client.exit(self.address_chat_node) # Вызываем метод уведомления всех участникам чата о выходе клиента из чата
         sys.exit(0)
 
     def get_chat_history(self, name: str):
@@ -73,7 +78,9 @@ class Main:
 
         self.client.start_receive()
 
-        self.client.connect((server_host, server_port))
+        self.address_chat_node = (server_host, server_port)
+
+        self.client.connect(self.address_chat_node)
     #
     # def restart(self, name):
     #     self.start()

@@ -78,6 +78,8 @@ class Server:
                     print("Hello,", addr)
                     self.send_info_about_new_client(addr, data['name'])
                     self.connections[data['name']] = self.convert_tuple_address_to_string(addr)
+            elif data['status'] == Status.EXIT.value:
+                self.connections.pop(data['name'])
 
     def run_server(self):
         thread = threading.Thread(target=self.receive)

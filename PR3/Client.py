@@ -44,12 +44,13 @@ class Client:
         )
         self.socket.sendto(message.to_json().encode("utf-8"), address)
 
-    def exit(self):
+    def exit(self, address_chat_node):
         message = Message(
             status=Status.EXIT.value,
             name=self.name
         )
         byte_json_message = message.to_json().encode('utf-8')
+        self.socket.sendto(byte_json_message, address_chat_node)
         for address in self.connections.values():
             host, port = address.split(":")
             self.socket.sendto(byte_json_message, (host, int(port)))
