@@ -1,6 +1,7 @@
 from Message import Message
 from Status import Status
 
+
 class Node:
     socket = None
     connections: dict = {}

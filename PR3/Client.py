@@ -35,10 +35,12 @@ class Client(Node):
         self.run = True
 
     def start_receive(self):
+        """Метод запускает обработку полученных сообщений в отдельном потоке"""
         thread = threading.Thread(target=self.receive, daemon=True)
         thread.start()
 
     def connect(self, address):
+        """Метод для подклчения к узлу чата."""
         message = Message(
             status=Status.JOIN.value,
             host=self.host,
@@ -51,6 +53,7 @@ class Client(Node):
             self.socket.sendto(message.to_json().encode("utf-8"), address)
 
     def exit(self, address_chat_node):
+        """Метод для выхода из чата. Уведомляет всех клиентов чата о том, что данный клиент выходит из чата."""
         message = Message(
             status=Status.EXIT.value,
             name=self.name
@@ -64,6 +67,7 @@ class Client(Node):
         sys.exit(0)
 
     def receive(self):
+        """Метод обработки входящих сообщений"""
         while self.run:
             data, addr = self.socket.recvfrom(1024)
             data = dict(json.loads(data.decode("utf-8")))
@@ -104,11 +108,9 @@ class Client(Node):
                 self.main.chats_history[data['name']] = []
                 # Обновляем UI
                 self.main.update_listBox(data['name'])
-            # elif data['status'] == Status.ERROR_DUPLICATE_NAME.value:
-            #     self.socket.close()
-            #     self.main.restart(data['name'])
 
     def send(self, to, message: Message):
+        """Метод отправки сообщения удаленному клиенту"""
         print("Список участников чата:", self.connections)
         byte_json_message = message.to_json().encode('utf-8')
         host, port = self.connections[to].split(":")
