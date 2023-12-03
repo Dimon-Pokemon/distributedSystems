@@ -25,15 +25,13 @@ class UserInterface:
     def __init__(self, main):
         self.main = main
 
-    # def show_error(self, title, message):
-    #     messagebox.showerror(title, message)
-
     def delete_name_from_listbox(self, name):
+        """Метод удаления с GUI имени участника чата"""
         index = self.list_box_connections.get(0, END).index(name)  # Получаем идекс элемента из listbox
         self.list_box_connections.delete(index) # Удаляем элемент по индексу
 
     def start_window_create_or_connect_to_chat(self, x: int = 0, y: int = 0, height: int = 280, width: int = 320):
-
+        """Метод для построения и конфигурации стартового окна чата"""
         self.connectToChatWindow = Tk()
         self.connectToChatWindow.title("Подсоединиться к чату")
         self.connectToChatWindow.geometry(f"{height}x{width}+{x}+{y}")
@@ -55,8 +53,7 @@ class UserInterface:
             input_server_host.get(),
             int(input_server_port.get())
         ))
-        #, self.connectToChatWindow.destroy(), self.start_main_window())
-        separator = ttk.Separator(self.connectToChatWindow)
+        separator = ttk.Separator(self.connectToChatWindow) # Вертикальная черта для красоты
         create = Button(self.connectToChatWindow, text="Создать чат", command=lambda: self.main.create_server(
             input_your_host.get(),
             int(input_your_port.get()),
@@ -65,7 +62,6 @@ class UserInterface:
             int(input_server_port.get())
         ))
 
-        # label1.pack()
         label_your_host.pack()
         input_your_host.pack()
         label_your_port.pack()
@@ -107,16 +103,19 @@ class UserInterface:
             self.print_message(message)
 
     def on_select_listbox(self, event):
+        """Метод для обработки события переключения между клиентами чата (ListBox)"""
         select_chat_name = self.list_box_connections.get(self.list_box_connections.curselection()[0]) # Получаем выбранное из списка имя пользователя
         self.main.set_selected_chat(select_chat_name) # Устанавливаем выбранный чат
         messages = self.main.get_chat_history(select_chat_name) # Получаем все сообщения чата с этим пользователем
         self.print_all_messages(messages) # Вывод на поле всех сообщений этого пользователя
 
     def send_message(self, event=None):
+        """Метод для отправки сообщения. Срабатывает при нажатии на кнопку 'Отправить' или на клавишу 'Enter' """
         self.main.send(self.list_box_connections.get(self.list_box_connections.curselection()), self.entry_message.get())
         self.entry_message.delete(0, END)
 
     def start_main_window(self, name, host, port):
+        """Метод для построения и конфигурации основного окна чата"""
         x = 400
         y = 600
         self.mainWindow = Tk()
