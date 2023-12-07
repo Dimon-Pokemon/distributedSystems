@@ -10,11 +10,12 @@ from Main import Main
 from Node import Node
 
 
+# Класс клиента Client наследуется от Node
 class Client(Node):
 
     run = False
-    connections: dict = {} # Список соединений вида name:address
-    socket = None
+    # connections: dict = {} # Список соединений вида name:address
+    # socket = None
 
     main: Main = None
 

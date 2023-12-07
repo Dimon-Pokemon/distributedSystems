@@ -12,9 +12,10 @@ from Node import Node
 from time import time, sleep
 
 
+# Класс сервера Server наследуется от Node
 class Server(Node):
-    socket = None
-    connections: dict = {}
+    # socket = None
+    # connections: dict = {}
     run: bool = False
     start_waiting: "time" = None # Переменная, определяющая точку начала отсчета до отключения сервера
     timeout: int = None

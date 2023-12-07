@@ -30,7 +30,7 @@ class Main:
 
     def update_listBox(self, name):
         """Метод для обновления списка подклчений на GUI"""
-        self.userInterface.list_box_connections.insert(0, name)
+        self.userInterface.listbox_connections.insert(0, name)
 
     def set_selected_chat(self, name):
         """Установка выбранного на GUI клиента для обмена сообщениями"""
