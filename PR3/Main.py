@@ -2,7 +2,6 @@ import os
 import sys
 import threading
 import time
-import tkinter
 
 from UserInterface import UserInterface
 from Message import Message
